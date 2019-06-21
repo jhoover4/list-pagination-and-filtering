@@ -1,50 +1,78 @@
 /******************************************
-Treehouse Techdegree:
-FSJS project 2 - List Filter and Pagination
-******************************************/
-   
-// Study guide for this project - https://drive.google.com/file/d/1OD1diUsTMdpfMDv677TfL1xO2CEkykSz/view?usp=sharing
+ Treehouse Techdegree:
+ FSJS project 2 - List Filter and Pagination
+ ******************************************/
 
+const studentItems = document.querySelectorAll(".student-item");
+const itemsPerPage = 10;
 
-/*** 
-   Add your global variables that store the DOM elements you will 
-   need to reference and/or manipulate. 
-   
-   But be mindful of which variables should be global and which 
-   should be locally scoped to one of the two main functions you're 
-   going to create. A good general rule of thumb is if the variable 
-   will only be used inside of a function, then it can be locally 
-   scoped to that function.
-***/
+/**
+ * Hides all of the items in the list except for the ten you want to show.
+ *
+ * @param {NodeListOf<Element>} list - Represents the actual list of students that you’ll pass in as an argument later when you call this function.
+ * @param page - Represents the page number that you’ll pass in as an argument later when you call this function.
+ */
+const showPage = (list, page) => {
+  let startIndex = page * itemsPerPage - itemsPerPage;
 
+  let maxStudents = studentItems.length;
+  let endIndex = Math.min(page * itemsPerPage, maxStudents);
 
+  for (let listEl of list) {
+    listEl.style.display = "none";
+  }
 
+  for (let i = startIndex; i < endIndex; i++) {
+    list[i].style.display = "block";
+  }
+};
 
-/*** 
-   Create the `showPage` function to hide all of the items in the 
-   list except for the ten you want to show.
+/**
+ * Generates pagination buttons.
+ *
+ * @param {NodeListOf<Element>} list - Represents the actual list of students that you’ll pass in as an argument later when you call this function.
+ */
+const appendPageLinks = list => {
+  const containerDiv = document.createElement("div");
+  containerDiv.className = "pagination";
+  containerDiv.appendChild(document.createElement("ul"));
 
-   Pro Tips: 
-     - Keep in mind that with a list of 54 students, the last page 
-       will only display four.
-     - Remember that the first student has an index of 0.
-     - Remember that a function `parameter` goes in the parens when 
-       you initially define the function, and it acts as a variable 
-       or a placeholder to represent the actual function `argument` 
-       that will be passed into the parens later when you call or 
-       "invoke" the function 
-***/
+  const paginationLinks = [];
 
+  const numberOfPages = Math.ceil(list.length / itemsPerPage);
+  for (let i = 1; i <= numberOfPages; i++) {
+    const newListItem = document.createElement("li");
+    newListItem.innerHTML = `<a href="#">${i}</a>`;
 
+    newListItem.addEventListener("click", e => {
+      const pageNumber = Number.parseInt(e.target.textContent);
 
+      addSelectedClass(paginationLinks, pageNumber);
+      showPage(list, pageNumber);
+    });
 
-/*** 
-   Create the `appendPageLinks function` to generate, append, and add 
-   functionality to the pagination buttons.
-***/
+    containerDiv.appendChild(newListItem);
+    paginationLinks.push(newListItem);
+  }
 
+  document.body.appendChild(containerDiv);
+  addSelectedClass(paginationLinks, 1);
+};
 
+/**
+ * Adds selected class to current page number.
+ *
+ * @param {Array<Element>} paginationLinks
+ * @param {Number} pageNumber
+ */
+const addSelectedClass = (paginationLinks, pageNumber) => {
+  for (let linkEl of paginationLinks) {
+    linkEl.firstChild.className = "";
+  }
 
+  paginationLinks[pageNumber - 1].firstChild.className = "active";
+};
 
-
-// Remember to delete the comments that came with this file, and replace them with your own code comments.
+// Initialize
+appendPageLinks(studentItems);
+showPage(studentItems, 1);
