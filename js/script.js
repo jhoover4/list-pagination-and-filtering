@@ -112,7 +112,23 @@ const filterStudents = (list, filterText) => {
     }
   }
 
+  if (filteredList.length <= 0) {
+    showNoResults();
+  } else {
+    showResults(filteredList);
+  }
+};
+
+const showNoResults = () => {
+  document.querySelector(".no-results").style.display = "block";
+  document.querySelector(".pagination").style.display = "none";
+};
+
+const showResults = filteredList => {
+  document.querySelector(".no-results").style.display = "none";
+
   const containerDiv = document.querySelector(".pagination");
+  containerDiv.style.display = "block";
 
   createPaginationLinks(filteredList, containerDiv);
   showPage(filteredList, 1);
@@ -150,9 +166,24 @@ const createPaginationLinks = (list, containerDiv) => {
   addSelectedClass(paginationLinks, 1);
 };
 
+/**
+ * Creates initial empty search results element.
+ */
+const createNoResultsParagraph = () => {
+  const pageEl = document.querySelector(".page");
+
+  const emptyParagraph = document.createElement("p");
+  emptyParagraph.className = "no-results";
+  emptyParagraph.textContent = "No results.";
+  emptyParagraph.style.display = "none";
+
+  pageEl.appendChild(emptyParagraph);
+};
+
 const run = () => {
   appendPageLinks(studentItems);
   showPage(studentItems, 1);
   addSearchBar();
+  createNoResultsParagraph();
 };
 run();
